@@ -28,7 +28,7 @@ Optional: Swagger UI, Postman, or Talend API Tester
 bash
 Copy
 Edit
-git clone https://github.com/your-username/hrms-api.git
+[git clone https://github.com/your-username/hrms-api.git](https://github.com/mani-tammina/hrms_server.git)
 cd hrms-api
 npm install
 ⚙️ Configuration
