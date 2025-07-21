@@ -1,0 +1,179 @@
+`
+    CREATE TABLE IF NOT EXISTS departments (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100) NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS employees (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100) NOT NULL,
+      email VARCHAR(100) UNIQUE NOT NULL,
+      phone VARCHAR(20),
+      doj DATE,
+      department_id INTEGER REFERENCES departments(id),
+      designation VARCHAR(100),
+      basic_salary NUMERIC,
+      pf_applicable BOOLEAN DEFAULT true,
+      esi_applicable BOOLEAN DEFAULT true,
+      pan_number VARCHAR(20),
+      aadhaar_number VARCHAR(20),
+      status VARCHAR(20) DEFAULT 'Active',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS payrolls (
+      id SERIAL PRIMARY KEY,
+      employee_id INTEGER REFERENCES employees(id),
+      salary_month DATE,
+      gross_salary NUMERIC,
+      pf_deduction NUMERIC,
+      esi_deduction NUMERIC,
+      tds_deduction NUMERIC,
+      other_deductions NUMERIC,
+      net_salary NUMERIC,
+      status VARCHAR(20) DEFAULT 'Processed'
+    );
+
+    CREATE TABLE IF NOT EXISTS reimbursements (
+      id SERIAL PRIMARY KEY,
+      employee_id INTEGER REFERENCES employees(id),
+      title VARCHAR(100),
+      amount NUMERIC,
+      status VARCHAR(20) DEFAULT 'Pending',
+      submitted_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS bonuses (
+      id SERIAL PRIMARY KEY,
+      employee_id INTEGER REFERENCES employees(id),
+      amount NUMERIC,
+      reason TEXT,
+      issued_on DATE
+    );
+
+    CREATE TABLE IF NOT EXISTS attendance_logs (
+      id SERIAL PRIMARY KEY,
+      employee_id INTEGER REFERENCES employees(id),
+      date DATE,
+      check_in TIME,
+      check_out TIME,
+      status VARCHAR(20)
+    );
+
+    CREATE TABLE IF NOT EXISTS leave_policies (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100),
+      days_per_year INTEGER,
+      carry_forward BOOLEAN DEFAULT false
+    );
+
+    CREATE TABLE IF NOT EXISTS leaves (
+      id SERIAL PRIMARY KEY,
+      employee_id INTEGER REFERENCES employees(id),
+      type VARCHAR(50),
+      start_date DATE,
+      end_date DATE,
+      status VARCHAR(20) DEFAULT 'Pending',
+      applied_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS leave_balances (
+      id SERIAL PRIMARY KEY,
+      employee_id INTEGER REFERENCES employees(id),
+      leave_type VARCHAR(50),
+      balance NUMERIC
+    );
+
+    CREATE TABLE IF NOT EXISTS goals (
+      id SERIAL PRIMARY KEY,
+      employee_id INTEGER REFERENCES employees(id),
+      title VARCHAR(255),
+      due_date DATE,
+      status VARCHAR(20) DEFAULT 'Open'
+    );
+
+    CREATE TABLE IF NOT EXISTS performance_reviews (
+      id SERIAL PRIMARY KEY,
+      employee_id INTEGER REFERENCES employees(id),
+      review_period VARCHAR(50),
+      score NUMERIC,
+      reviewer VARCHAR(100),
+      comments TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS feedbacks (
+      id SERIAL PRIMARY KEY,
+      from_employee INTEGER REFERENCES employees(id),
+      to_employee INTEGER REFERENCES employees(id),
+      message TEXT,
+      submitted_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS projects (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100),
+      client VARCHAR(100)
+    );
+
+    CREATE TABLE IF NOT EXISTS timesheets (
+      id SERIAL PRIMARY KEY,
+      employee_id INTEGER REFERENCES employees(id),
+      project_id INTEGER REFERENCES projects(id),
+      log_date DATE,
+      hours NUMERIC,
+      notes TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS expense_types (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100)
+    );
+
+    CREATE TABLE IF NOT EXISTS expenses (
+      id SERIAL PRIMARY KEY,
+      employee_id INTEGER REFERENCES employees(id),
+      type_id INTEGER REFERENCES expense_types(id),
+      amount NUMERIC,
+      description TEXT,
+      status VARCHAR(20) DEFAULT 'Pending',
+      submitted_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS expense_approvals (
+      id SERIAL PRIMARY KEY,
+      expense_id INTEGER REFERENCES expenses(id),
+      approved_by INTEGER REFERENCES employees(id),
+      approved_on TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS job_posts (
+      id SERIAL PRIMARY KEY,
+      title VARCHAR(100),
+      department_id INTEGER REFERENCES departments(id),
+      description TEXT,
+      status VARCHAR(20) DEFAULT 'Open'
+    );
+
+    CREATE TABLE IF NOT EXISTS candidates (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100),
+      email VARCHAR(100),
+      phone VARCHAR(20)
+    );
+
+    CREATE TABLE IF NOT EXISTS applications (
+      id SERIAL PRIMARY KEY,
+      candidate_id INTEGER REFERENCES candidates(id),
+      job_post_id INTEGER REFERENCES job_posts(id),
+      status VARCHAR(20) DEFAULT 'Applied',
+      applied_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS interviews (
+      id SERIAL PRIMARY KEY,
+      application_id INTEGER REFERENCES applications(id),
+      interviewer VARCHAR(100),
+      schedule TIMESTAMP,
+      result VARCHAR(50)
+    );
+  `
